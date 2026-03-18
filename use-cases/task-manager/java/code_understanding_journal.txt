@@ -1,0 +1,45 @@
+# Exercise Part 1: Understanding a Specific Feature
+
+Gemini results:
+It is great to see you diving into the codebase. This structure is a classic example of a modular Java application, often taught in environments that emphasize clean architecture and separation of concerns.
+Here is a breakdown to help you get oriented.
+
+1. Validation and Misconceptions
+Your understanding is largely accurate, but there is one key distinction regarding the configuration:
+
+Java & CSV: You are correct. The application manages tasks and uses a CSV file for persistence, which is a common way to handle data without needing a full database setup.
+Gradle vs. Maven (The "POM" Mystery): This is the most important correction. In Java, there are two primary build tools: Maven and Gradle.
+Maven uses a pom.xml file.
+Gradle uses build.gradle and settings.gradle files.
+Since this project uses Gradle, you will not find a pom.xml file. All the dependencies and build instructions are located in the build.gradle file in the root directory (and sometimes within sub-project folders).
+Folder Structure: Your intuition about the folders is spot on, but they follow a specific architectural pattern called Layered Architecture.
+
+2. Technology Stack & Key Libraries
+Beyond Java and Gradle, you should look for these in the build.gradle file:
+JUnit / AssertJ: These are standard for testing. You will likely find a src/test folder in each module.
+Picocli (Optional but common): Often used in Java CLI projects to handle command-line arguments.
+OpenCSV / Jackson: Libraries that might be used to parse the CSV files or handle data mapping.
+
+3. Folder Purpose and Contents
+In a multi-project Gradle setup like this, each folder is a "sub-project" or "module."
+model: This contains the "Domain Objects." Expect to find a Task.java class here. This class defines what a "Task" is (e.g., ID, description, status). It doesn't know about the CLI or the CSV file; it only knows about the data.
+storage: This is the "Data Access Layer." It contains the logic for reading from and writing to the CSV file. It handles the translation between a line of text in a CSV and a Task object in the model.
+cli: This is the "Presentation Layer." It contains the code that interacts with the user via the terminal. It handles printing menus and taking user input.
+app: This is the "Orchestration Layer." It brings everything together. It tells the cli to start, uses the storage to load data, and passes that data to the model.
+
+4. Application Entry Points
+The entry point is the main method. In this specific structure:
+Navigate to app/src/main/java/.../.
+Look for a class named Main.java or App.java.
+This is where the application "boots up." It initializes the storage engine and the CLI before starting the main loop.
+
+5. Questions for Your Team
+To show you are thinking about the bigger picture, you might ask:
+Dependency Management: "I noticed we are using Gradle; are there specific versions of the Java SDK we should stick to for compatibility across the team?"
+Error Handling: "How do we handle corrupted data in the CSV file? Is there a specific validation logic in the storage module I should be aware of?"
+Testing Strategy: "Do we follow a specific testing pattern, like TDD, and are there existing unit tests for the model that I can use as a reference?"
+Extensibility: "If we wanted to move from CSV to a database later, is the storage module designed with an Interface that would make that swap easier?"
+Environment Setup: "Are there any specific Gradle tasks I should run to set up my local environment or verify my changes (e.g., ./gradlew clean build)?"
+
+
+____________________________________________________________________________________________________________________________
